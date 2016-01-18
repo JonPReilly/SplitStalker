@@ -1,0 +1,50 @@
+<html>
+<pre>
+Hello,
+
+	You are probably found this page through my bot's user agent information. If you are here by mistake you may close the page.
+
+	My site, SplitStalker.com, is a personal project I developed just for fun. It has no commercial use whatsoever.
+	
+	My bot pings TFRRS the recent meet results page - <a href="https://www.tfrrs.org/results_search.html">https://www.tfrrs.org/results_search.html</a>.
+	
+	<h3>The pings occur every Monday-Thursday every 4 hours, and every Friday-Sunday every 2 hours.</h3>
+
+	From there it will open up all the meets that is has not seen yet are parse them.
+
+	For each result on the meet page I check if the athlete (identified by their name and school) is being followed by any of my users (realistically just me and possibly a few friends)
+
+	I then send an email out to the user with the results. An example format is shown below:
+
+-------------------------------------------------------------------------------------------------------------
+[User],
+
+		Athlete(s) you are following have just competed at the [Meet Name]:
+
+        [Athlete] of [School] has run a [Time] in the [Event], placing [Place].
+
+        [Athlete] of [School] has run a [Time] in the [Event], placing [Place].
+
+        ...
+
+
+Check out the full result for the [Meet Name] at [Link to meet on TFRRS]
+-------------------------------------------------------------------------------------------------------------
+
+
+<h3>Note that no meet or race data is ever stored. <b>Ever</b>.</h3>
+
+<h3>
+If you would like this to stop or have any suggestions, such as a low bandwidth way of querying your meets, please send me an email at <script language="JavaScript">
+var username = "jonreilly1994";
+var hostname = "gmail";
+var linktext = username + "@" + hostname ;
+document.write(  username + "@" + hostname + ".com" );
+</script>
+
+</h3>
+
+Note that the entire source code for SplitStalker is on github at <a href="https://github.com/jonreilly1994">https://github.com/jonreilly1994<a> 
+</pre>
+</html>
+

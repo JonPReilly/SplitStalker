@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+
+{% load staticfiles %}
+
+<script type="text/javascript">
+function scrollTo(hash) {
+    location.hash = "#" + hash;
+}
+</script>
+
+<!-- Jquery -->
+<script src="{% static "js/jquery-1.9.1.js" %}"></script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+    $('input:checkbox').bootstrapSwitch();
+    });
+</script>
+
+{% if userinfo %}
+<script type="text/javascript">scrollTo("user-info")</script>
+{% endif %}
+
+
+
+ <!-- /Jquery -->
+
+<!-- Bootstrap -->
+<link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}">
+<script type="text/javascript" src= "{% static "js/bootstrap.min.js" %} "></script>
+<!-- /Bootstrap -->
+
+<!-- Bootstrap Switch -->
+<link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-switch.css" %}">
+<script type="text/javascript" src= "{% static "js/bootstrap-switch.js" %} "></script>
+<!-- /Bootstrap Switch -->
+
+<!-- Font awesome -->
+<!-- Free icons to use: -->
+<!-- http://fortawesome.github.io/Font-Awesome -->
+<link rel="stylesheet" type="text/css" href="{% static "css/fontawesome/font-awesome.css" %}">
+<!-- /Font awesome -->
+
+<!-- Devaid Template -->
+<link rel="stylesheet" type="text/css" href="{% static "css/devaid/styles.css" %}">
+    <!-- Awesome free template. Check it out at: -->
+    <!-- http://themes.3rdwavemedia.com/website-templates/devaid-free-bootstrap-theme-developers/ -->
+
+<!-- /Devaid Template -->
+<title> SplitStalker </title>
+	
+
+
+
+<body data-spy="scroll">
+    
+   
+    
+    <!-- ******HEADER****** --> 
+    <header id="header" class="header">  
+        <div class="container">            
+            <h1 class="logo pull-left">
+                <a class="scrollto" href="#promo">
+                    <span class="logo-title"> <i class="fa fa-clock-o"></i> SplitStalker</span>
+                </a>
+            </h1><!--//logo-->              
+            <nav id="main-nav" class="main-nav navbar-right" role="navigation">
+                <div class="navbar-header">
+                    <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button><!--//nav-toggle-->
+                </div><!--//navbar-header-->            
+                <div class="navbar-collapse collapse" id="navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active nav-item sr-only"><a class="scrollto" href="#promo">Home</a></li>
+                        <li class="nav-item"><a class="scrollto" href="#about">About</a></li>
+                        
+                        <li class="nav-item"><a class="scrollto" href="#docs">Get Started</a></li>
+                                              
+                        <li class="nav-item last"><a class="scrollto" href="#contact">Contact</a></li>
+                    </ul><!--//nav-->
+                </div><!--//navabr-collapse-->
+            </nav><!--//main-nav-->
+        </div>
+    </header><!--//header-->
+    
+    <!-- ******PROMO****** -->
+    <section id="promo" class="promo section offset-header">
+        <div class="container text-center">
+            <h2 class="title"><i class="fa fa-clock-o"></i> Split<span class="highlight">Stalker</span></h2>
+            <p class="intro">A simple athlete following tool.</p>
+
+            {% if not user.is_authenticated %}
+    
+
+                <div class="btns">
+                    <a class="btn btn-cta-secondary" href="accounts/login" >Login</a>
+                    <a class="btn btn-cta-primary" href="accounts/register">Register</a>
+
+                </div>
+
+            {% endif %}
+
+            {% if user.is_authenticated %}  
+
+                    <p class="intro">Logged in as : <b class="text-highlight">  {{user.get_username}}   </b> </p>
+
+                
+                    <a class="btn btn-cta-primary" href="{% url 'auth_logout' %}?next=/" >Logout</a>
+
+                    {% if user.pk == 1 %}
+                            <a class="btn btn-cta-primary" href="admin">Admin Site</a>
+                    {% endif %}
+                 
+                
+            {% endif %}
+
+
+            <ul class="meta list-inline">
+                <li id ="user-info"><a href="https://github.com/jonreilly1994" target="_blank">View on GitHub</a></li>
+                <li>A peronsal, non commerical project by <a href="https://github.com/jonreilly1994" target="_blank">Jonathan Reilly</a> </li>
+            </ul><!--//meta-->
+        </div><!--//container-->
+
+
+        <div id="user" class="social-media">
+
+        {% if user.is_authenticated %}
+
+        {% if validation_error %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Error!</strong> Can't follow more than {{validation_error}} athletes.
+            </div>
+            {% endif %}
+
+        {% if success_change %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Success</strong> You're following list has been modified.
+            </div>
+            {% endif %}
+
+
+         <h3> Find new athletes to follow </h3> 
+         <div class="alert alert-info alert-dismissable" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            You may seach first name, last name, or school seperated by spaces.
+            
+            It is possible your athlete has not yet been added.
+            </div>
+        <div class="row">
+
+
+            <form class="navbar-form navbar-left" role="search" method="GET">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder=   {% if valid_query %} {{valid_query}} {% else %} "Search For Athletes" {% endif %}, name="q">
+            </div>
+            
+            <button type="submit" class="btn btn-default">Search</button>
+        </form>
+
+        </div>
+
+    </br>
+    </br>
+
+  {% if user.is_authenticated %}  
+   <form method = "POST" > {% csrf_token %}
+    {% if results %}   
+            <div class="row">
+                {% for result in results %}
+                    <div class="item col-md-6 col-sm-6 col-xs-12">
+                        <div class="content " >
+
+                             <input type="checkbox" data-off-text="Click to follow" data-on-text="Follow"  data-on-color="success" data-off-color="warning" data-toggle="toggle"
+                {% if following %} {% for ath in following %} {% if ath == result %}  disabled="disabled" {% endif %} {% endfor %} {% endif %}
+                 name="following_athletes" value="{{result.pk}}"> {{result}}
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        {% endif %}
+
+        </br>
+           
+    {% endif %} 
+
+
+            {% if following %}
+            <h3> You are currently following: </h3> 
+
+           
+
+            <div class="row">
+
+                {% for result in following %}
+
+                    <div class="item col-md-4 col-sm-6 col-xs-12">
+                    <div class="content " >
+                        <input  checked="checked" data-off-text="Unfollow" data-off-color="warning"  data-on-text="Following" data-on-color="success" data-toggle="toggle" type="checkbox" name="following_athletes" value="{{result.pk}}"> {{result}}
+                    </div>
+                    </div>
+
+
+                {% endfor %}
+               
+                            
+            </div><!--//row-->    
+
+            {% endif %}  
+        </br>
+            <button type="submit" value="save" class="btn btn-lg btn-success btn-block">Save</button>
+            </form>
+         {% endif %}  
+
+            {% if not following %}  
+            <h3> You currently are not following anyone. </h3> 
+             {% endif %}  
+        
+       
+
+
+
+    </div>
+
+
+
+    </section><!--//promo-->
+
+
+<!--
+
+  <div class="item col-md-4 col-sm-6 col-xs-12">
+    <div class="content " >
+
+        </div>
+
+  </div>
+  
+
+-->
+
+    
+    <!-- ******ABOUT****** --> 
+    <section id="about" class="about section">
+        <div class="container">
+            <h2 class="title text-center">What is SplitStalker?</h2>
+            <p class="intro text-center">Splitstalker is a fun, open-source, and non-commerical site that allows users to follow track and field atheltes running in college. The user will then be notified via email when the athlete runs new times</p>
+            <div class="row">
+                <div class="item col-md-4 col-sm-6 col-xs-12">
+                    <div class="icon-holder">
+                        <i class="fa fa-heart"></i>
+                    </div>
+                    <div class="content">
+                        <h3 class="sub-title">Follow your favorie athletes</h3>
+                        <p>Search for your teammates, family, or even yourself! SplitStalker makes it easy to find athletes you want to follow.</p>
+                    </div><!--//content-->
+                </div><!--//item-->
+                <div class="item col-md-4 col-sm-6 col-xs-12">
+                    <div class="icon-holder">
+                        <i class="fa fa-envelope"></i>
+                    </div>
+                    <div class="content">
+                        <h3 class="sub-title">Real time notifications</h3>
+                        <p>Receive near-instant notifications when an athlete you are following runs a new time.</p>
+                    </div><!--//content-->
+                </div><!--//item-->
+                <div class="clearfix visible-md"></div>    
+                <div class="item col-md-4 col-sm-6 col-xs-12">
+                    <div class="icon-holder">
+                        <i class="fa fa-tablet"></i>
+                    </div>
+                    <div class="content">
+                        <h3 class="sub-title">Mobile-friendly</h3>
+                        <p>Meet a new rival at your meet? Change which athletes you do and don't follow instantely on your mobile device.</p>
+                    </div><!--//content-->
+                </div><!--//item-->             
+                <div class="clearfix visible-md"></div>    
+                              
+                <div class="item col-md-4 col-sm-6 col-xs-12">
+                    <div class="icon-holder">
+                        <i class="fa fa-code"></i>
+                    </div>
+                    <div class="content " >
+                        <h3 class="sub-title">Open source</h3>
+                        <p>All of SplitStalker's source code is available on <a href="https://github.com/jonreilly1994" target="_blank"> <i class="fa fa-github"></i> Github.</a> </p>
+                    </div><!--//content-->
+                </div><!--//item-->
+                               
+            </div><!--//row-->            
+        </div><!--//container-->
+    </section><!--//about-->
+    
+  
+    
+     <!-- ******FEATURES****** --> 
+    <section id="docs" class="features section">
+        <div class="container text-center">
+            <h2 class="title">Get Started</h2>
+            <ul class="feature-list list-unstyled">
+                <li> <i class="fa fa-circle"></i>Register an account </i> <a class="btn btn-cta-secondary" href="accounts/register"> Register<i class="fa fa-user"></i> </a>
+                </li>
+
+                 <li> <i class="fa fa-circle"></i>Log in </i> <a class="btn btn-cta-secondary" href="accounts/login"> Log in<i class="fa fa-user"></i> </a>
+                </li>
+
+                <li> <i class="fa fa-circle"></i>  Search for users and </i>  
+                </li>
+
+                 <li>
+              
+                    
+                       <input  checked="checked" data-off-text="Don't Follow" data-off-color="warning"  data-on-text="Follow" data-on-color="success" data-toggle="toggle" type="checkbox">
+
+                   </br> 
+                   </br> 
+                   or 
+                   </br> 
+                   </br>
+
+                   <input   data-off-text="Don't Follow" data-off-color="warning"  data-on-text="Follow" data-on-color="success" data-toggle="toggle" type="checkbox">
+
+                   </br> 
+                   </br> 
+                   them.
+                </li>
+
+                
+            </br>
+                <li> <i class="fa fa-circle"></i>Click save.</i>  
+                <li> <i class="fa fa-circle"></i>That's it! Recieve notifications when followed athletes run races.</i>  
+
+            </ul>
+        </div><!--//container-->
+    </section><!--//features-->
+    
+   
+    
+    <!-- ******CONTACT****** --> 
+    <section id="contact" class="about section has-pattern">
+        <div class="container">
+            <div class="contact-inner">
+                <h2 class="title  text-center">Use</h2>
+               
+                <div class="clearfix"></div>
+                <div class="info text-center">
+                    <h4 class="sub-title">This site polls <a href= "https://tfrrs.org/">TFRRS </a> for new meet information about once every hour. It is possible that they may request that I stop doing this.
+                    </br>
+                    </br>
+                    This project was inteded to be a learning experiance and something for my resume.
+                    </br>
+                    </br>
+                    As such, I can't garuntee the app will stay up forever or function 100% correctly. 
+                    </br>
+                    </br>
+                    Thank you for using it!
+                    </h4>
+                    
+                </div><!--//info-->
+            </div><!--//contact-inner-->
+
+        </br>
+            <div class="contact-inner">
+                <h2 class="title  text-center">Contact</h2>
+               
+                <div class="clearfix"></div>
+                <div class="info text-center">
+                    <h4 class="sub-title">I hope you find the site and it's code usefull<br />Feel free to get in touch if you have any questions, comments, or concerns.</h4>
+                    <ul class="social-icons list-inline">
+                        
+                        <li class="last"><a href="mailto:jonreilly1994@gmail.com"><i class="fa fa-envelope"></i></a></li>  
+                        <li><a href="https://github.com/jonreilly1994"><i class="fa fa-github"></i></a></li>   
+                                    
+                    </ul>
+                </div><!--//info-->
+            </div><!--//contact-inner-->
+
+
+
+        </div><!--//container-->
+    </section><!--//contact-->  
+      
+    <!-- ******FOOTER****** --> 
+    <footer class="footer">
+        <div class="container text-center">
+            <!--/* This template is released under the Creative Commons Attribution 3.0 License. Please keep the attribution link below when using for your own project. Thank you for your support. :) If you'd like to use the template without the attribution, you can check out other license options via our website: themes.3rdwavemedia.com */-->
+            <small class="copyright">Designed with <i class="fa fa-heart"></i> by <a href="http://themes.3rdwavemedia.com" target="_blank">Xiaoying Riley</a> for developers</small>
+        </div><!--//container-->
+    </footer><!--//footer-->
+     
+    <!-- Javascript -->  
+    <!--        
+        <script type="text/javascript" src="assets/plugins/jquery-1.11.3.min.js"></script>   
+        <script type="text/javascript" src="assets/plugins/jquery.easing.1.3.js"></script>   
+        <script type="text/javascript" src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>     
+        <script type="text/javascript" src="assets/plugins/jquery-scrollTo/jquery.scrollTo.min.js"></script> 
+        <script type="text/javascript" src="assets/plugins/prism/prism.js"></script>    
+        <script type="text/javascript" src="assets/js/main.js"></script>      
+    --> 
+</body>
+</html>
+
+
+
+    <!--  <ul class="list-group">
+  <li class="list-group-item">
+    <span class="badge"><input  checked="checked" data-off-text="Unfollow" data-off-color="warning"  data-on-text="Following" data-on-color="success" data-toggle="toggle" type="checkbox" name="following_athletes" value="{{result.pk}}"> </span>
+    Cras justo odio
+  </li>
+</ul> -->

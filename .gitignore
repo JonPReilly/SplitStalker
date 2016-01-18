@@ -45,3 +45,15 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+#Custom ignores
+*.pyc
+logs/*
+signups/migrations/*
+errors/migrations/*
+StartingBlocks/production_settings.py
+venv.bat
+static_content/*
+fixtures/*
+cronjobs.txt
+meetPing.py
