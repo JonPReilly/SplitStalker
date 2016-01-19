@@ -238,10 +238,10 @@ def parseMeet(meet):
 	    try:
                 Current_race = race.find("h2").text.replace("\n","").replace("\t","")
             except AttributeError:
-                Current_race = ["Unknown Race"]
+                Current_race = "[Unknown Race]"
                 race_parse = 1
 
-        if (race_parse == 2 and not "Relay" in Current_race and not "Medley" in Current_race and not "[Unknown Race]" in Current_race):
+        if (race_parse == 2 and not "Relay" in Current_race and not "Medley" in Current_race):
             email_stubs = parseEvent(race,Current_race)
             
             for email in email_stubs:
