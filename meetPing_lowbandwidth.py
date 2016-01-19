@@ -238,7 +238,7 @@ def parseMeet(meet):
 	    try:
                 Current_race = race.find("h2").text.replace("\n","").replace("\t","")
             except AttributeError:
-                Current_race = "[Unknown Race]"
+                Current_race = "Unknown Race - Possibly A Multi Event"
                 race_parse = 1
 
         if (race_parse == 2 and not "Relay" in Current_race and not "Medley" in Current_race):

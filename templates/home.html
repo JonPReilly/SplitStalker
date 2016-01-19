@@ -155,6 +155,8 @@ function scrollTo(hash) {
             
             It is possible your athlete has not yet been added.
             </div>
+       
+
         <div class="row">
 
 
@@ -164,6 +166,7 @@ function scrollTo(hash) {
             </div>
             
             <button type="submit" class="btn btn-default">Search</button>
+            
         </form>
 
         </div>
@@ -190,10 +193,14 @@ function scrollTo(hash) {
         {% endif %}
 
         </br>
+
            
     {% endif %} 
 
-
+     <div class="form-group">
+            <h3> Can't find who you are looking for? </h3>
+            <a class="btn btn-cta-secondary" href="athlete/add">Add a Custom User</a>
+             </div>
             {% if following %}
             <h3> You are currently following: </h3> 
 
@@ -355,10 +362,10 @@ function scrollTo(hash) {
                     <h4 class="sub-title">This site polls <a href= "https://tfrrs.org/">TFRRS </a> for new meet information about once every hour. It is possible that they may request that I stop doing this.
                     </br>
                     </br>
-                    This project was inteded to be a learning experiance and something for my resume.
+                    This project was intended to be a learning experiance and something for my resume.
                     </br>
                     </br>
-                    As such, I can't garuntee the app will stay up forever or function 100% correctly. 
+                    As such, I can't guarantee the app will stay up forever or function 100% correctly. 
                     </br>
                     </br>
                     Thank you for using it!

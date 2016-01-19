@@ -21,6 +21,7 @@ class UserAdmin(BaseUserAdmin):
     inlines = (StalkerInline, )
 
 
+
 class LastMeetAdmin(admin.ModelAdmin):
 	search_fields = ['name', 'last_url']
 	class Meta:
@@ -28,6 +29,10 @@ class LastMeetAdmin(admin.ModelAdmin):
 
 class AthleteAdmin(admin.ModelAdmin):
 	search_fields = ['name', 'school']
+
+	list_filter = (
+        ('created_by', admin.RelatedOnlyFieldListFilter),
+    )
 
 	class Meta:
 		model = Athlete

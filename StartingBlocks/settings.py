@@ -99,10 +99,11 @@ LOGGING = {
 
 MAX_FOLLOWING_ALLOWED = 25 #The max number of athletes a user may follow
 MAX_QUERY_RESULTS = 10 #The max number of athletes a search will return
+MAX_CREATED_ALLOWED = 3 #The max number of custom athletes a user may create
 
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
 REGISTRATION_AUTO_LOGIN = True # Automatically log the user in.
-REGISTRATION_OPEN = False
+REGISTRATION_OPEN = True
 SITE_ID = 1
 
 
@@ -112,6 +113,7 @@ LOGIN_REDIRECT_URL = "/"
 DEBUG = False
 
 ALLOWED_HOSTS = [
+	'reillj5.webfactional.com',
 	'splitstalker.com',
 ]
 

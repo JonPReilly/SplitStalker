@@ -7,9 +7,11 @@ from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
+from django.shortcuts import redirect
 
 from .models import Athlete
 from .models import Stalker
+from .forms import AddAthleteForm
 
 
 
@@ -67,7 +69,69 @@ def stalkerGetOrCreate(usr):
     return user
 
 
+@csrf_protect
+def add_athlete(request):
 
+    if not request.user.is_authenticated():
+        return redirect('/accounts/login/')
+    else:
+
+        if request.method == 'GET':
+            form = AddAthleteForm()
+            
+        elif request.method == 'POST':
+            form = AddAthleteForm(request.POST)
+
+            if form.is_valid():
+                
+                
+                already_created = Athlete.objects.filter(created_by = request.user)
+
+                if (len(already_created) >= settings.MAX_CREATED_ALLOWED):
+                    form.add_error(form.errors, "You have already created the max number of custom athletes. Contact admin for help.")
+                    return render(request, 'athlete_add.html' , {'form' : form})
+
+
+                name  = form.cleaned_data['name']
+                school  = form.cleaned_data['school']
+
+                names = name.split()
+                if (len(names) != 2):
+                    form.add_error(form.errors, "Name entered is in incorrect format")
+                    return render(request, 'athlete_add.html' , {'form' : form})
+
+                
+                search_term = names[0] + " " + names[1] + " " + school 
+                entry_query = get_query(search_term, ['name', 'school',])
+                search_results = Athlete.objects.filter(entry_query)[0:1]
+                
+                results = search_results
+
+                if (len(results) != 0):
+                    
+                    possible_meant = ""
+                    for x in results:
+                        possible_meant += x.name + "(" + x.school + ")\n"
+                   
+                    form.add_error(form.errors, "Athlete(s) " + possible_meant + " already seem to exist.")
+                    return render(request, 'athlete_add.html' , {'form' : form})
+
+                new_athlete = Athlete(name = name, school = school, url = (name.replace(" ","_") + "/" +school ) , created_by = request.user )
+
+                new_athlete.save()
+
+                user = stalkerGetOrCreate(request.user)
+                user.following_athletes.add(new_athlete)
+
+                
+                return render(request, 'athlete_add.html' , {'form' : form , 'success_added' : new_athlete})
+                
+
+                
+
+
+        return render(request, 'athlete_add.html' , {'form' : form})
+    
 
 @csrf_protect
 def home(request):
@@ -77,8 +141,7 @@ def home(request):
 
     log = logging.getLogger(settings.LOG_OBJECT)
     
-
-    log.info( request.META['HTTP_USER_AGENT'] +  " requested homepage")
+    log.info(request.META['HTTP_HOST'] + " requested homepage")
     
     athletes = None
     results = None
