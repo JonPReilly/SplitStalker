@@ -6,6 +6,7 @@ import logging
 import urllib2
 import difflib
 import string
+import zlib
 
 from bs4 import BeautifulSoup
 
@@ -28,12 +29,14 @@ def openUrl(url):
     try:
         print "Opening: " + url 
         req = urllib2.Request(url , headers={ 'User-Agent': 'Meetpingbot/1.0 (jonreilly1994@gmail.com http://splitstalker.com/botinfo)' })
+        req.add_header('Accept-encoding', 'gzip')
         html = urllib2.urlopen(req).read()
+        decompressed_data=zlib.decompress(html, 16+zlib.MAX_WBITS)
     except Exception  as e:
         log.error("[MeetPing-openUrl] Error fetching " + url)
         return ""
 
-    return html
+    return decompressed_data
 
 
 def getMeetOrNone(url):
