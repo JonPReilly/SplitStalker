@@ -1,0 +1,5 @@
+0 */4 * * * python2.7 $HOME/webapps/django_splitstalker/StartingBlocks/manage.py runcrons
+
+*/20 * * * * $HOME/webapps/django_splitstalker/apache2/bin/restart
+
+*/20 * * * * $HOME/webapps/django_crowd/apache2/bin/restart

@@ -30,7 +30,7 @@ class Stalker(models.Model):
 
 class LastMeet(models.Model):
 	name = models.CharField(max_length = 120, default = "Meet")
-	last_url = models.CharField(max_length = 120, unique= True)
+	last_url = models.CharField(max_length = 120, unique=True)
 	meets_processed = models.IntegerField(default = 0)
 	def __unicode__(self):
 		return smart_unicode(self.name + "(" + self.last_url + ")")

@@ -3,7 +3,7 @@ from django_cron import CronJobBase, Schedule
 from settings import BASE_DIR, LOG_OBJECT
 import subprocess
 import sys
-
+from django.core.mail import send_mail
 
 import logging
 
@@ -38,7 +38,8 @@ class MeetPing(CronJobBase):
 	   		log.error("[MeetPingCron] Error in MeetPing. Check logs")
 	   		print "[MeetPingCron] Error in MeetPing. Check logs"
 	   		exeption = "RC: " + str(exc.returncode) + "\n---Output---\n"+ str(exc.output) + "\n----\n"
-	   		raise MeetPingException(exeption)
+	   		send_mail('MeetPingCron Fail', exeption, 'SplitStalkerBot@gmail.com', ['jonreilly1994@gmail.com'], fail_silently=True)
+			raise MeetPingException(exeption)
 	   		
 	   	else:
 	   		print "[MeetPingCron] MeetPing ended succesfully"

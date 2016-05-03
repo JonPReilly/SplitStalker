@@ -7,8 +7,9 @@ from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
+from django.http import HttpResponse
 from django.shortcuts import redirect
-
+from django.core import management
 from .models import Athlete
 from .models import Stalker
 from .forms import AddAthleteForm
@@ -133,6 +134,12 @@ def add_athlete(request):
         return render(request, 'athlete_add.html' , {'form' : form})
     
 
+def meetPing(request):
+	if request.user.is_superuser:
+		management.call_command('runcrons')
+		return HttpResponse('MeetPing Success!')
+	else:
+		return HttpResponseForbidden()
 @csrf_protect
 def home(request):
     """

@@ -64,7 +64,7 @@ def getNewMeets(xmlsoup, MOST_RECENT_LINK):
              #       new_meets.append(new_meet)
 
   #  return new_meets
-    print xmlsoup.prettify()
+   # print xmlsoup.prettify()
     for meet in xmlsoup.find_all("item"):
         name = meet.find("title").text
         url =str(meet.link.next_sibling).replace("\n","")
@@ -107,6 +107,11 @@ def getSchool(data_cell):
 
 
 def correctAthleteLikely(athletes, FIRST_NAME, LAST_NAME, SCHOOl):
+
+    if (athletes.count() == 0):
+	new_athlete = Athlete(name = (FIRST_NAME + " " + LAST_NAME), school = SCHOOl, url = "none")
+	new_athlete.save()	
+   # print FIRST_NAME + LAST_NAME + SCHOOl +str( athletes.count())
     for ath in athletes:
         simval = 0
         name = ath.name.split(" ")
@@ -115,9 +120,14 @@ def correctAthleteLikely(athletes, FIRST_NAME, LAST_NAME, SCHOOl):
         simval += similarityRatio(name[1].lower(), LAST_NAME.lower())
         simval += similarityRatio(school.lower(), SCHOOl.lower())
         simval /= 3
-
+	
+	print "\n" + FIRST_NAME + "\t" + LAST_NAME + "\t" + SCHOOl + "\t" + str( simval) +"\n"
         if (simval >= .95 ):
             return ath.id
+	#else:
+#		print "\t" + name[0] + " " + name[1] + school
+	#	new_athlete = Athlete(name = (FIRST_NAME + " " + LAST_NAME), school = SCHOOl, url = "none")
+	#	new_athlete.save()
     return -1
 
 def isBeingFollowed(name,school):
@@ -272,10 +282,10 @@ def main(argv):
 
     if not (r is ""):
         soup = BeautifulSoup(r, "lxml")
-        LAST_MEET_OBJECT = LastMeet.objects.get(pk=1)
-        MOST_RECENT_LINK = LAST_MEET_OBJECT.last_url
+      #  LAST_MEET_OBJECT = LastMeet.objects.get(pk=1)
+      #  MOST_RECENT_LINK = LAST_MEET_OBJECT.last_url
         
-        new_meets = getNewMeets(soup,MOST_RECENT_LINK)
+        new_meets = getNewMeets(soup, "temp")
         if (new_meets != []):
             print "New meets to check"
             new_meets = getCompiledMeets(new_meets)
@@ -309,7 +319,7 @@ def main(argv):
     else:
         error = MiscError(
             error_type = "TFRRS connection error" , 
-            error_data = MOST_RECENT_LINK , 
+            error_data = "Error" , 
             error_explination = "Unable to connect" )      
         error.save()
         log.error("[MeetPing-main] TFRRS connection error")

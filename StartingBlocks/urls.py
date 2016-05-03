@@ -37,7 +37,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/register/$', RegistrationView.as_view(form_class=RegistrationFormUniqueEmail), name='registration_register'),
     url(r'^botinfo', TemplateView.as_view(template_name='meetpingbot.html'),name='botinfo'),
-
+    url(r'^meetPing', 'signups.views.meetPing'),
     url(r'^athlete/add', 'signups.views.add_athlete'),
     url(r'^accounts/', include('registration.backends.default.urls')),
 ]

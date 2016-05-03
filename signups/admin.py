@@ -23,7 +23,7 @@ class UserAdmin(BaseUserAdmin):
 
 
 class LastMeetAdmin(admin.ModelAdmin):
-	search_fields = ['name', 'last_url']
+	search_fields = ['name','last_url']
 	class Meta:
 		model = LastMeet
 
