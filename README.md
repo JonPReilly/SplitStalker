@@ -1,4 +1,5 @@
 # SplitStalker
+Splitstalker is live at http://splitstalker.com/
   ## Synopsis
   SplitStalker is a simple tool allowing users to to follow collegiate athletes competing in track and field.
 
