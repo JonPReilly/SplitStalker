@@ -71,8 +71,9 @@ def getNewMeets(xmlsoup, MOST_RECENT_LINK):
         if (getMeetOrNone(url) == None):
 	    processed = LastMeet(last_url = url, meets_processed=0,name=name)
             processed.save()
-            new_meet = Meet(name,url)
-            new_meets.append(new_meet)
+            if (not "/xc/" in url):
+	        new_meet = Meet(name,url)
+                new_meets.append(new_meet)
         
 
     return new_meets[::-1]
@@ -97,17 +98,34 @@ def updateRaceParse(race_parse):
     return race_parse + 1
 
 def getName(data_cell):
+    #print data_cell    
+    #if (len(data_cell) == 1):
+    #    return "Unknown Name"
+   # try:
     print data_cell
-    name = data_cell[2].split(",")
+    name = data_cell[1].split(",")
+    print name
+    if(len(name) <2):
+        return ["Unknown","Name"]
     name[1] = name[1].replace(" " , "")
     name[0] = name[0].replace(" " , "")
+   # except Exception as e:
+   #     return "Unknown Name"
     return name[::-1]
 def getSchool(data_cell):
-    return data_cell[4]
+   # if (len(data_cell)== 1):
+    #    return "Unknown"
+    #try:
+    if(len(data_cell) < 3):
+         return "Unknown"    
+    return data_cell[3]
+   # except Exception as e:
+    #    return "Unknown School"
 
 
 def correctAthleteLikely(athletes, FIRST_NAME, LAST_NAME, SCHOOl):
-
+    print "Searching for:\n"
+    print FIRST_NAME, LAST_NAME, SCHOOl
     if (athletes.count() == 0):
 	new_athlete = Athlete(name = (FIRST_NAME + " " + LAST_NAME), school = SCHOOl, url = "none")
 	new_athlete.save()	
@@ -121,7 +139,7 @@ def correctAthleteLikely(athletes, FIRST_NAME, LAST_NAME, SCHOOl):
         simval += similarityRatio(school.lower(), SCHOOl.lower())
         simval /= 3
 	
-	print "\n" + FIRST_NAME + "\t" + LAST_NAME + "\t" + SCHOOl + "\t" + str( simval) +"\n"
+	#print "\n" + FIRST_NAME + "\t" + LAST_NAME + "\t" + SCHOOl + "\t" + str( simval) +"\n"
         if (simval >= .95 ):
             return ath.id
 	#else:
@@ -134,11 +152,11 @@ def isBeingFollowed(name,school):
     FIRST_NAME = str(   filter( lambda x: x in string.printable,  name[0] )    )
     LAST_NAME = str( filter ( lambda x: x in string.printable,  name[1] ) )
     followed = Athlete.objects.filter(name__icontains= LAST_NAME).filter(name__icontains = FIRST_NAME)
-
+    
     pk = correctAthleteLikely(followed, FIRST_NAME, LAST_NAME, school)
     
 
-    return pk
+    return pk , FIRST_NAME + " " + LAST_NAME, school
 
 def parseEvent(race,Current_race):
     #print "Cirremt race: " , Current_race
@@ -147,8 +165,12 @@ def parseEvent(race,Current_race):
         data_cell = []
         for cells in row.findAll("td"):
             data_cell.append(cells.text.replace("\n","").replace("\t",""))
-        
-        pk = isBeingFollowed(getName(data_cell), getSchool(data_cell))
+        if(len(data_cell) == 0):
+            pk = -1
+        else:    
+            pk,ath_name,ath_school = isBeingFollowed(getName(data_cell), getSchool(data_cell))
+        #print  getName(data_cell) + getSchool(data_cell)
+	#print pk
         if (pk != -1):
             followers = Stalker.objects.filter(following_athletes__id = pk)
             
@@ -158,6 +180,8 @@ def parseEvent(race,Current_race):
                 data_copy[0] = follower.user.email
                 data_copy[len(data_copy) - 1] = place
                 data_copy[1] = Current_race
+                data_copy[2] = ath_name
+                data_copy[4] = ath_school
                 email_stubs.append(data_copy)
     
     return email_stubs
@@ -192,10 +216,10 @@ def sendMailIndividual(send_to, stubs, url, name):
     usr = User.objects.get(email = send_to)
     addressing = usr.get_username() +",\n\n"
     html = addressing + "Athlete(s) you are following have just competed at the " + name + ":\n\n"
-    
+    print stubs    
     for data in stubs:
         print data
-        html += "\t" + constructHtmlFromData(data)
+        html += "\t" + data[2]
         html += " of " + data[4]
         if (not "m" in data[5]): 
             html += " has run a time of "
@@ -277,7 +301,7 @@ def main(argv):
     # time.sleep(10)
     LOW_BANDWITH_QUERY = "?printable=1&popup=1"
    # r = openUrl("https://www.tfrrs.org/results_search.html" + LOW_BANDWITH_QUERY)
-    r = openUrl("https://www.tfrrs.org/rss/results.rss")
+    r = openUrl("https://www.tfrrs.org/results.rss")
 
 
     if not (r is ""):
